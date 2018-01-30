@@ -11,14 +11,14 @@ This application relies on a config file like the following. All of the fields a
 #### `config.json`
 ```json
 {
-  'org': 'org-name',
-  'label': {
-    'name': 'label-name',
-    'color': '89abcd'
+  "org": "org-name",
+  "label": {
+    "name": "label-name",
+    "color": "89abcd"
   },
-  'auth': {
-    'user': 'user',
-    'token': '## generate one from https://github.com/settings/tokens ##'
+  "auth": {
+    "user": "user",
+    "token": "## generate one from https://github.com/settings/tokens ##"
   }
 }
 ```
