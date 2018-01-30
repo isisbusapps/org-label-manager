@@ -1,0 +1,12 @@
+{
+  "name": "org-label-manager",
+  "version": "0.0.1",
+  "description": "A small tool to add a label every repo in a GitHub organisation.",
+  "main": "index.js",
+  "author": "ISIS Business Applications",
+  "license": "BSD-3-Clause",
+  "dependencies": {
+    "request": "^2.83.0",
+    "request-promise-native": "^1.0.5"
+  }
+}
