@@ -25,7 +25,6 @@ request
   .get(`https://api.github.com/orgs/${org}/repos`, opts)
   .then(repos => {
     repos.forEach(repo => {
-      console.log(repo.url, label);
 
       let reqOpts = Object.assign({}, opts, {
         'json': label
