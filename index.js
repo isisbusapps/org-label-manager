@@ -1,15 +1,15 @@
-let request = require('request-promise-native');
-let fs = require('fs');
+const request = require('request-promise-native');
+const fs = require('fs');
 
-let config = JSON.parse(fs.readFileSync('./config.json', 'utf-8'));
+const config = JSON.parse(fs.readFileSync('./config.json', 'utf-8'));
 
-let org = config.org;
-let label = config.label;
+const org = config.org;
+const label = config.label;
 
-let user = config.auth.user;
-let token = config.auth.token;
+const user = config.auth.user;
+const token = config.auth.token;
 
-let opts = {
+const opts = {
   'headers': {
     'User-Agent': 'ISISBusApps-OrgLabels'
   },
