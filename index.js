@@ -32,8 +32,18 @@ request
       let repoLabelUrl = repo.url + '/labels';
 
       request.post(repoLabelUrl, reqOpts)
-        .then(() => console.log(`Added ${label} to ${repo.name}`));
-      
+        .then(() => console.log(`Added "${label.name}" to "${repo.name}"`))
+        .catch(e => {
+            let error = e.error;
+            let errorPrefix = `Could not add "${label.name}" for "${repo.name}"`;
+            if (error.message === 'Validation Failed' && error.errors.length === 1 && error.errors[0].field === 'name') {
+              console.log(`${errorPrefix} because it already exists.`);
+            } else if (error.message === 'Not Found') {
+              console.log(`${errorPrefix} due to insufficient permissions.`);
+            } else {
+              console.log(`${errorPrefix} due to unexpected error: ${error.message}.`);
+            }
+          }); 
     });
   });
 
