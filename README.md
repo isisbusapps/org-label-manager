@@ -8,6 +8,8 @@ It can be ran from the command line, after using `npm install`, with `node index
 
 This application relies on a config file like the following. All of the fields are mandatory. The config file must be in the directory that you're currently in.
 
+A maximum of 100 repositories are currently returned by the request.
+
 #### `config.json`
 ```json
 {

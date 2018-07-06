@@ -22,7 +22,7 @@ const opts = {
 };
 
 request
-  .get(`https://api.github.com/orgs/${org}/repos`, opts)
+  .get(`https://api.github.com/orgs/${org}/repos?per_page=100`, opts)
   .then(repos => {
     repos.forEach(repo => {
 
