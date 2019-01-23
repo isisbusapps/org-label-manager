@@ -1,0 +1,101 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "#http://facilities.stfc.ac.uk/schema/github-labels.json",
+  "description": "A list of categories and their labels for GitHub.",
+  "type": "array",
+  "items": {
+    "$ref": "#category"
+  },
+  "definitions": {
+    "category": {
+      "$id": "#category",
+      "type": "object",
+      "description": "A category of label, this will be the prefix to the label on GitHub.",
+      "required": ["name", "type", "description", "visual-priorities"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The name of the category."
+        },
+        "type": {
+          "anyOf": [
+            {
+              "$ref": "#issue-type"
+            },
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#issue-type"
+              }
+            }
+          ],
+          "description": "The type of issue that it applies to."
+        },
+        "description": {
+          "type": "string",
+          "description": "The description of the category."
+        },
+        "visual-priorities": {
+          "$ref": "#visual-priorities"
+        },
+        "labels": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#label"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "label": {
+      "$id": "#label",
+      "type": "object",
+      "required": [
+        "description",
+        "visual-priority"
+      ],
+      "properties": {
+        "description": {
+          "type": "string",
+          "description": "The description of the label."
+        },
+        "visual-priority": {
+          "type": "string",
+          "enum": ["high", "medium", "low"],
+          "description": "The name of the priorities."
+        }
+      },
+      "additionalProperties": false
+    },
+    "visual-priorities": {
+      "$id": "#visual-priorities",
+      "type": "object",
+      "description": "A map of the high, medium, and low visual priorities to their colours.",
+      "required": ["high", "medium", "low"],
+      "properties": {
+        "high": {
+          "$ref": "#rgb-color"
+        },
+        "medium": {
+          "$ref": "#rgb-color"
+        },
+        "low": {
+          "$ref": "#rgb-color"
+        }
+      },
+      "additionalProperties": false
+    },
+    "rgb-color": {
+      "$id": "#rgb-color",
+      "type": "string",
+      "description": "RGB color",
+      "pattern": "^#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$",
+      "example": "#aa33cc"
+    },
+    "issue-type": {
+      "$id": "#issue-type",
+      "type": "string",
+      "enum": ["issue", "pr"]
+    }
+  }
+}

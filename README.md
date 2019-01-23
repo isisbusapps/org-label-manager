@@ -1,27 +1,27 @@
-`org-label-manager` is a small tool to add a label to every repo in a GitHub organisation.
+`org-label-manager` is an opinionated tool to add a label to a single
+repo or every repo in an organisation.
 
 ### Usage
 
-The tool takes no arguments.
+Here is the command line usage for the tool:
 
-It can be ran from the command line, after using `npm install`, with `node index.js`.
-
-This application relies on a config file like the following. All of the fields are mandatory. The config file must be in the directory that you're currently in.
-
-A maximum of 100 repositories are currently returned by the request.
-
-#### `config.json`
-```json
-{
-  "org": "org-name",
-  "label": {
-    "name": "label-name",
-    "color": "89abcd"
-  },
-  "auth": {
-    "user": "user",
-    "token": "## generate one from https://github.com/settings/tokens ##"
-  }
-}
 ```
+usage: update-labels-in-github [options] <file>
+
+Options:
+  -o, --org [org]    The name of the org.
+  -r, --repo [repo]  The name of the repo.
+  -h, --help         output usage information
+
+The following environment variables must be set:
+ - GIT_USER - the git user that owns the token specified in GIT_API_TOKEN
+ - GIT_API_TOKEN - the git API token used to access the GitHub API
+
+```
+
+### The config
+
+The file for the config must follow the schema shown in [the config
+schema](src/schema/github-labels.json). The tool will validate this
+config.
 
