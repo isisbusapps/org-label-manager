@@ -7,14 +7,14 @@ const program = require('commander');
 
 program
     .usage('[options] <file>')
-    .option('-o, --org [org]', 'The name of the org.')
-    .option('-r, --repo [repo]', 'The name of the repo.');
+    .option('-o, --org [org]', 'name of the org')
+    .option('-r, --repo [repo]', 'name of the repo in the format "<REPO_OWNER_NAME>/<REPO_NAME>"');
 
 program.on('--help', function() {
   console.log(`
 The following environment variables must be set:
- - GIT_USER - the git user that owns the token specified in GIT_API_TOKEN
- - GIT_API_TOKEN - the git API token used to access the GitHub API`);
+ - GITHUB_USER - the git user that owns the token specified in GIT_API_TOKEN
+ - GITHUB_API_TOKEN - the git API token used to access the GitHub API`);
 });
 
 program.parse(process.argv);
