@@ -168,7 +168,8 @@ async function run() {
     const exclude = toUpdate.exclude;
     const allRepos = await fetchReposForOrg(toUpdate.org);
 
-    const reposToUpdate = filterExcludedRepos(allRepos, exclude);
+    const reposToUpdate = filterExcludedRepos(allRepos, exclude)
+            .filter(r => !r.archived);
 
     reposToUpdate.forEach(r => updateRepo(r));
 
