@@ -5,10 +5,15 @@ const validate = require('./config-validator.js');
 
 const program = require('commander');
 
+function commaSeparatedList(value) {
+  return value.split(',');
+}
+
 program
     .usage('[options] <file>')
     .option('-o, --org [org]', 'name of the org')
-    .option('-r, --repo [repo]', 'name of the repo in the format "<REPO_OWNER_NAME>/<REPO_NAME>"');
+    .option('-r, --repo [repo]', 'name of the repo in the format "<REPO_OWNER_NAME>/<REPO_NAME>"')
+    .option('-e, --exclude [exclude]', 'comma separated list of repos to exclude, without the repo owner name, e.g. repo1,repo2', commaSeparatedList);
 
 program.on('--help', function() {
   console.log(`
@@ -24,7 +29,7 @@ if ((program.org && program.repo) || !(program.org || program.repo)) {
 }
 
 const configLocation = process.argv[process.argv.length - 1];
-const toUpdate = program.org ? { "org": program.org } : { "repo": program.repo };
+const toUpdate = program.org ? { "org": program.org, "exclude": program.exclude } : { "repo": program.repo };
 
 const user = process.env.GITHUB_USER;
 const token = process.env.GITHUB_API_TOKEN;
@@ -147,12 +152,25 @@ async function updateRepo(repo) {
 
 }
 
+function filterExcludedRepos(allRepos, excluded) {
+
+  if (excluded !== null && excluded !== undefined) {
+    return allRepos.filter(r => !excluded.includes(r.name));
+  } else {
+    return allRepos;
+  }
+
+}
+
 async function run() {
 
   if (toUpdate.org) {
-    const repos = await fetchReposForOrg(toUpdate.org);
+    const exclude = toUpdate.exclude;
+    const allRepos = await fetchReposForOrg(toUpdate.org);
 
-    repos.forEach(r => updateRepo(r));
+    const reposToUpdate = filterExcludedRepos(allRepos, exclude);
+
+    reposToUpdate.forEach(r => updateRepo(r));
 
   } else if (toUpdate.repo) {
     const repo = await fetchRepo(toUpdate.repo);
