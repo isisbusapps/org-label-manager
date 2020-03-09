@@ -3,33 +3,46 @@ const fs = require('fs');
 
 const validate = require('./config-validator.js');
 
-const program = require('commander');
+const argv = require('yargs')
+  .command('$0 <labels-spec-file> <org>',
+  `Update labels for the specified repo to the given specification config file.
+  This will skip any archived repos or included repos that don't exist in an org.
 
-function commaSeparatedList(value) {
-  return value.split(',');
-}
+  The following environment variables must be set:
+   - GITHUB_USER - the git user that owns the token specified in GIT_API_TOKEN
+   - GITHUB_API_TOKEN - the git API token used to access the GitHub API
+  `,
+    yargs => {
+    yargs
+      .positional('labels-spec-file', {
+        type: 'string',
+        describe: 'The labels specification file to update the labels to.',
+      })
+      .positional('org', {
+        type: 'string',
+        describe: 'The name of the org to update. By default, all repos in the org will be updated.'
+          + ' Use the options --include-repos and --exclude-repos to limit the repos to update.'
+      })
+      .option('include-repos', {
+        type: 'array',
+        alias: 'i',
+        describe: 'A list of repo names to update within the org. Only the repos with the given names will be updated. If no list is provided, all repos in the org will be updated.'
+      })
+      .option('exclude-repos', {
+        type: 'array',
+        alias: 'e',
+        describe: 'A list of repos name to exclude from updating within the org. Only repos without the given names will be updated. If no list is provided, all repos in the org will be updated.'
+      })
+  }).argv;
 
-program
-    .usage('[options] <file>')
-    .option('-o, --org [org]', 'name of the org')
-    .option('-r, --repo [repo]', 'name of the repo in the format "<REPO_OWNER_NAME>/<REPO_NAME>"')
-    .option('-e, --exclude [exclude]', 'comma separated list of repos to exclude, without the repo owner name, e.g. repo1,repo2', commaSeparatedList);
 
-program.on('--help', function() {
-  console.log(`
-The following environment variables must be set:
- - GITHUB_USER - the git user that owns the token specified in GIT_API_TOKEN
- - GITHUB_API_TOKEN - the git API token used to access the GitHub API`);
-});
 
-program.parse(process.argv);
-
-if ((program.org && program.repo) || !(program.org || program.repo)) {
-  throw 'Either org or repo must be specified';
-}
-
-const configLocation = process.argv[process.argv.length - 1];
-const toUpdate = program.org ? { "org": program.org, "exclude": program.exclude } : { "repo": program.repo };
+const configLocation = argv.labelsSpecFile;
+const toUpdate = {
+  org: argv.org,
+  includeRepos: argv.includeRepos,
+  excludeRepos: argv.excludeRepos
+};
 
 const user = process.env.GITHUB_USER;
 const token = process.env.GITHUB_API_TOKEN;
@@ -152,34 +165,42 @@ async function updateRepo(repo) {
 
 }
 
-function filterExcludedRepos(allRepos, excluded) {
+function filterRepos(allRepos, options) {
+  let filteredRepos = allRepos;
 
-  if (excluded !== null && excluded !== undefined) {
-    return allRepos.filter(r => !excluded.includes(r.name));
-  } else {
-    return allRepos;
+  const includeRepos = options.includeRepos;
+  const excludeRepos = options.excludeRepos;
+
+  if (includeRepos !== undefined) {
+    /*
+     * We only want to include repos that are explicitly in the include
+     * list, if it's defined.
+     */
+    filteredRepos = filteredRepos.filter(r => includeRepos.includes(r.name));
   }
+  
+  if (excludeRepos !== undefined) {
+    /*
+     * We only want to exclude repos that are explictily in the exclude
+     * list, if it's defined.
+     */
+    filteredRepos = filteredRepos.filter(r => !excludeRepos.includes(r.name));
+  }
+
+  filteredRepos = filteredRepos.filter(r => !r.archived);
+
+  return filteredRepos;
+}
+
+async function run(options) {
+
+    const allRepos = await fetchReposForOrg(options.org);
+
+    const reposToUpdate = filterRepos(allRepos, options);
+
+    await Promise.all(reposToUpdate.map(updateRepo));
 
 }
 
-async function run() {
-
-  if (toUpdate.org) {
-    const exclude = toUpdate.exclude;
-    const allRepos = await fetchReposForOrg(toUpdate.org);
-
-    const reposToUpdate = filterExcludedRepos(allRepos, exclude)
-            .filter(r => !r.archived);
-
-    reposToUpdate.forEach(r => updateRepo(r));
-
-  } else if (toUpdate.repo) {
-    const repo = await fetchRepo(toUpdate.repo);
-
-    updateRepo(repo);
-  }
-
-}
-
-run();
+run(toUpdate);
 
