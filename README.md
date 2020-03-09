@@ -32,6 +32,7 @@ Options:
   --exclude-repos, -e  A list of repos name to exclude from updating within the
                        org. Only repos without the given names will be updated.
                        If no list is provided, all repos in the org will be
+                       updated.                                          [array]
 ```
 
 ### The config
