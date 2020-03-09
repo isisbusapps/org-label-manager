@@ -1,6 +1,6 @@
 {
   "name": "org-label-manager",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "A small tool to add a label every repo in a GitHub organisation.",
   "main": "src/update-labels-in-github.js",
   "author": "ISIS Business Applications",
