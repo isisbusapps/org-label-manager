@@ -23,7 +23,7 @@ for(let category of config) {
 
   const name = category.name;
   const description = category.description;
-  const values = category.labels 
+  const values = category.labels
                     ? Object.keys(category.labels).map(l => "`" + l + "`").join(", ")
                     : "Repo/team dependent";
 
@@ -38,7 +38,7 @@ for(let category of config) {
   const colorMedium = category["visual-priorities"].medium;
   const colorHigh = category["visual-priorities"].high;
 
-  const generateColorUrl = color => `https://placehold.it/12/${color.replace("#", '')}/000000?text=+`
+  const generateColorUrl = color => `https://via.placeholder.com/12/${color.replace("#", '')}/000000?text=+`
   const generateColorImage = color => `![${color}](${generateColorUrl(color)})`
 
   const generateColorDescriptor = color => `\`${color}\` ${generateColorImage(color)}`
