@@ -6,7 +6,7 @@
   "author": "ISIS Business Applications",
   "license": "BSD-3-Clause",
   "dependencies": {
-    "ajv": "^6.7.0",
+    "ajv": "^6.12.3",
     "request": "^2.83.0",
     "request-promise-native": "^1.0.5",
     "yargs": "^15.1.0"
